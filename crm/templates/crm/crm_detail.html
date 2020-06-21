@@ -1,0 +1,152 @@
+{% extends "base_generic.html" %}
+{% block baner %} 
+{%endblock%}
+{% block logo %}
+{%endblock%}
+{% block footer %}
+{%endblock%}
+{% block content %}
+
+
+
+<div class="product_detail"> 
+
+    {% csrf_token %}
+  <div class="slider_detail">
+      <div class="slider_detail__wrapper">
+      {% for image in gallery %}  
+        <div class="slider_detail__item">
+          <div style="height: 500px; background-image:url('{{image.image.url}}') ; background-size: contain" ></div>
+        </div>
+      {% endfor %}
+      </div>
+      <a class="slider_detail__control slider_detail__control_left" href="#" role="button"></a>
+      <a class="slider_detail__control slider_detail__control_right slider_detail__control_show" href="#" role="button"></a>
+    </div>
+    <div class="product_detail_description"> 
+        <div class="product_detail_title"> <h3>{{ product.product_title }}</h3></div> 
+        <p>Описание:{{ product.product_description}}</p> 
+        <h4>Цена: {{ product.product_prace}}</h4>
+        <h4>Цвет:</h4>
+      <div  style="display: flex ">
+        {% for product_color in color_all  %}
+
+      <a href="{% url 'crm-detail' pk=product.id color_product=product_color %}"> <div style= "margin-left: 5px; background-color:{{product_color}}; width: 50px; height: 25px; border: 1px solid black;  " ></div> </a> 
+
+        {% endfor%} 
+
+      </div>
+      
+<div style="margin-top: 10px">
+    <form action="{%url 'complite_shop' %}" id ="crm_detail" class="form-inline">{% csrf_token %}
+     
+      <select id = "crm_size">
+        {% for copy in product_size %}
+         <option value="{{copy.id}}">{{copy.size}}</option>
+        
+       {% endfor%}
+      </select> Выберите размер
+     
+       <br>
+       <br>
+       <button  type="submit" id = "submit_btn_crm" data-product_slug ="{{product.slug}}" data-product_title="{{ product.product_title }}"
+        data-product_prace="{{ product.product_prace}}"
+        {%for image in color_image %}
+        
+        data-product_image="{{image.image}}"
+        {% endfor%}
+        >Продан</button>
+    </form>
+  
+   
+  </div>
+
+  <form action=" {% url 'crm_updade' %}" id ="quantity_product" class="form-inline">{% csrf_token %}
+		{% for copy in product.productinstance_set.all %}
+		{{copy.size}} 
+		  <div style="display: flex; ">
+	<input id="quantity_product_num" type="number" value="{{copy.quantity}}">
+	
+	<button type="submit" id = "submit_quantity_product" data-quantity_size="{{ copy.size }}" data-quantity_id="{{copy.id}}" >Изменить</button>
+	<br></div>
+	{% endfor%}
+	</form>
+
+
+
+	  </div>
+	  
+
+
+
+
+  
+  </div> 
+
+
+
+
+<script>
+
+
+$(document).ready(function(){
+var form =$('#crm_detail');
+console.log(form)
+form.on('submit',function(e){
+    e.preventDefault();
+    var select = $('#crm_size option:selected');
+    var size  = select.val();
+    console.log(size);
+    var submit_btn = $('#submit_btn_crm');
+    var product_image = submit_btn.data("product_image");
+    var product_title =  submit_btn.data("product_title");
+    var product_prace =  submit_btn.data("product_prace");
+    var product_slug = submit_btn.data("product_slug");
+    console.log(product_prace)
+    console.log(product_title)
+    console.log(product_image)
+    console.log(product_slug)
+    var opacity = 0;
+    var w = 0;
+
+
+
+    var data = {};
+    data.product_image = product_image;
+    data.product_size_id = size;
+    data.product_title = product_title;
+    data.product_prace = product_prace;
+    data.product_slug = product_slug;
+    var csrf_token = $('#crm_detail [name="csrfmiddlewaretoken"]').val();
+        data["csrfmiddlewaretoken"] = csrf_token;
+    var url = form.attr("action"); 
+    console.log(data)
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: data,
+        cache: true,
+        success: function (data) {
+			console.log("OK");
+			alert("Успешно добавлен")},
+        
+        error: function(){
+            console.log("error");
+        },
+            
+        })   
+
+})
+}
+);
+
+
+
+
+
+</script>  
+
+
+
+
+{% endblock %}

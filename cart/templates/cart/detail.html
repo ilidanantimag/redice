@@ -1,0 +1,158 @@
+{% extends "base_generic.html" %}
+{% load static %}
+{% block baner %} 
+{%endblock%}
+{% block content %}
+<div class="title_cart"><h3>Ваша корзина</h3></div>
+
+
+
+
+<div class="detail_cart"> 
+
+
+            
+{% for p in cart_product%}
+
+<div class="product_in_cart">
+        
+    <div style="margin-bottom: 10px ; display: flex" >
+    <div class="cart_image">
+            
+         <img src="{{p.product_image.url}}" height="250" width="200">
+    </div>
+    <div class="cart_descripton">
+        {{p.product_id}}
+            <h3>{{p.product_title}}</h3>
+            <p>Размер: {{p.product_size}} </p>
+        
+        <p>Цена: {{p.product_prace}}</p>
+        <p> Доступно на складе: {{p.product_quantity}}</p> 
+        <a href="{{p.get_absolute_url}}">Удалить</a> 
+    </div>
+</div> </div>   
+{% endfor%}
+
+</div>
+
+
+
+
+
+
+
+<div class="orders" >
+        <div class = "orders_complite"  
+        style=" display: flex;
+                  flex-direction: column;
+                   align-items: center;
+                   
+        height: 0px; width: 0px; opacity: 0; 
+        color:red;
+        position: absolute; 
+        background-color: rgba(29, 29, 29, 0.904)"> 
+
+   <h3>Пожалуйста подождите...</h3>
+   <h4> Ваш заказ обрабатывается не покидайте страницу </h4>
+   <div > 
+        <div class="cssload-square">
+                <div class="cssload-square-part cssload-square-green"></div>
+                <div class="cssload-square-part cssload-square-pink"></div>
+                <div class="cssload-square-blend"></div>
+            </div>
+
+
+   </div>
+
+
+
+
+            </div>
+    
+
+
+    <div class="orders_info">
+        
+    <div class="title_cart"><h3>Условия доставки</h3>  </div> 
+    <div>
+    <div class="orders_info1">  
+        <h4>Сроки доставки:</h4>
+    <p>Доставка осуществляется в день заказа, если товар заказан до 17.00 </p>
+    <p>При оформлении после 17.00 доставка осуществляется на
+   следующий рабочий день.</p>
+  <h4> Примерка:</h4>
+  <p> Время на примерку 10 минут.</p>
+  <h4>Оплата:</h4>
+ <p>Оплата производится исключительно в национальной валюте (белорусских рублях) курьеру, наличным и безналичным способом.</p>
+ <p>В подтверждение оплаты курьер выдает Вам товарный чек.</p>
+
+
+   </div>
+   
+
+
+
+   <div class="orders_info2"> 
+    <div class="button"> <a href="{{ product.get_absolute_url }}">Подробнее </a> </div>
+   </div> 
+
+
+
+    </div>
+   
+</div>
+    <div class="orders_form">
+            <h3>Оформите заказ</h3>
+            <form action="{%url 'orders' %}" id ="orders" class="form-inline">{% csrf_token %}
+                Имя:<br>
+                <input type="text" id="firstname">
+                <br>
+                Фамилия:<br>
+                <input type="text" id="lastname"><br>
+                Адрес:<br>
+                <input type="text" id="adress">
+                <br>
+                Номер телефона:<br>
+                <input type="tel" id="phone">
+                <br>
+                <br>             
+            <button type="submit" id = "submit_orders" data-cart_product="{{ cart_product }}" data-index_url="{% url 'index' %}">Оформить заказ</button>
+            </form>
+        </div>
+
+
+    
+    </div>
+    
+<script>
+
+function orders_complite(){
+    var doc_w = $(document).width();
+    var doc_h = $(document).height();
+    console.log(doc_w)
+    console.log(doc_h)
+    $('.orders_complite').css({
+     'width': doc_w,
+     'height':'500px',
+     'opacity': 1,
+    
+   });
+   var w = $('.orders_complite').css('width' );
+   console.log(w)
+
+}
+
+
+function ok(){
+    $('.orders_complite').html('<h3>Ваш заказ принят</h3> <p>В течении нескольки минут c вами связжутся специалисты нашего Call-центра </p><div style=" background-color: red "><a href="{% url 'index' %}">Продолжить</a></div>');
+    
+}
+
+
+
+</script>
+
+
+
+
+{% endblock %}

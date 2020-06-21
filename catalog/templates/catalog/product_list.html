@@ -1,0 +1,41 @@
+{% extends "base_generic.html" %}
+{% block baner %} 
+{% endblock %}
+
+
+{% block content %}
+<div class="content2">
+<div class="submenu" style=" background-color: rgba(255, 0, 0, 0.616);">
+    {% for s in subcategories%}
+   <div style=  " margin-left: 10px;
+   margin-top: 5px;
+   margin-right: 10px;
+   margin-bottom: 5px;
+   
+
+   
+   
+   
+   "  ><a style="color: rgb(255, 255, 255);" href="{{ s.get_absolute_url }}"> {{ s.subcategories_title }} </a></div> 
+    {% endfor %}
+</div>
+
+
+
+<div class="indexproduct">
+{% for p in products %}
+<div class="product">
+<a href="{{p.get_absolute_url}}"><img src="{{ p.product_image.url }}" height="300" width="200"></a>
+ <h4>{{ p.product_title }}</h4> 
+  <p>{{ p.product_description}}</p>
+ <h4>Цена: {{ p.product_prace}}</h4> 
+ <a href="{{ product.get_absolute_url }}"> <div class="button">Перейти  </div></a>
+</div>
+{% endfor %}
+</div></div>
+
+
+    
+
+        
+{% endblock %}

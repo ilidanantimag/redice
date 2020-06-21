@@ -1,0 +1,177 @@
+{% extends "base_generic.html" %}
+{% block baner %} 
+{%endblock%}
+
+{% block content %}
+
+
+
+<div class="product_detail"> 
+
+    {% csrf_token %}
+  <div class="slider_detail" style="width: 330px; height: 480px;">
+      <div class="slider_detail__wrapper">
+      {% for image in gallery %}  
+        <div class="slider_detail__item" >
+          <div style="height: 500px;  background-image:url('{{image.image.url}}') ; background-size: contain" ></div>
+        </div>
+      {% endfor %}
+      </div>
+      <a class="slider_detail__control slider_detail__control_left" href="#" role="button"></a>
+      <a class="slider_detail__control slider_detail__control_right slider_detail__control_show" href="#" role="button"></a>
+    </div>
+    <div class="product_detail_description"> 
+        <div class="product_detail_title"> <h3>{{ product.product_title }}</h3></div> 
+        <p>Описание:{{ product.product_description}}</p> 
+        <h4>Цена: {{ product.product_prace}}</h4>
+        <h4>Цвет:</h4>
+      <div  style="display: flex ">
+        {% for product_color in color_all  %}
+
+      <a href="{% url 'product-detail' pk=product.id color_product=product_color %}"> <div style= "margin-left: 5px; background-color:{{product_color}}; width: 50px; height: 25px; border: 1px solid black;  " ></div> </a> 
+
+        {% endfor%} 
+
+      </div>
+      
+<div style="margin-top: 10px">
+    <form action="{%url 'cart_adding' %}" id ="by_product" class="form-inline">{% csrf_token %}
+     
+      <select id = "size">
+        {% for copy in product_size %}
+         <option value="{{copy.id}}">{{copy.size}}</option>
+        
+       {% endfor%}
+      </select> Выберите размер
+     
+       <br>
+       <br>
+       <button  type="submit" id = "submit_btn" data-product_slug ="{{product.slug}}" data-product_title="{{ product.product_title }}"
+        data-product_prace="{{ product.product_prace}}"
+        {%for image in color_image %}
+        
+        data-product_image="{{image.image}}"
+        {% endfor%}
+        >Добавить в корзину</button>
+    </form>
+   <div class="add_product" id="add_product">Товар добавлен!</div>
+   
+  </div>
+ 
+      </div>
+     
+
+  
+  </div> 
+  <div style="display: flex; flex-direction: column; justify-content: center ; margin-top: 30px ">
+    <div  style="display: flex ;justify-content: center; align-items: center;">  <hr  width="500px" ></hr><h3>Похожие товары</h3>  <hr  width="500px" ></hr></div>
+ <div style="display: flex ;justify-content: center;">
+  {% for product in product_category%}
+  <div class="product">
+    <a href="{{ product.get_absolute_url }}"><img src="{{ product.product_image.url }}" height="300" width="200"></a><br>
+   <h4>{{ product.product_title }}</h4>
+   <p>{{ product.product_description}}</p>
+   <div class="prace" > <p>Цена: {{ product.product_prace}} руб.</p> </div>
+   <div class="button"> <a href="{{ product.get_absolute_url }}">Перейти </a> </div>
+  </div>
+  {% endfor%}
+ </div>
+</div>
+
+{% endblock %}
+
+<script>
+
+
+var multiItemSlider = (function () {
+            return function (selector, config) {
+              var
+                _mainElement = document.querySelector(selector), // основный элемент блока
+                _sliderWrapper = _mainElement.querySelector('.slider_detail__wrapper'), // обертка для .slider-item
+                _sliderItems = _mainElement.querySelectorAll('.slider_detail__item'), // элементы (.slider-item)
+                _sliderControls = _mainElement.querySelectorAll('.slider_detail__control'), // элементы управления
+                _sliderControlLeft = _mainElement.querySelector('.slider_detail__control_left'), // кнопка "LEFT"
+                _sliderControlRight = _mainElement.querySelector('.slider_detail__control_right'), // кнопка "RIGHT"
+                _wrapperWidth = parseFloat(getComputedStyle(_sliderWrapper).width), // ширина обёртки
+                _itemWidth = parseFloat(getComputedStyle(_sliderItems[0]).width), // ширина одного элемента    
+                _positionLeftItem = 0, // позиция левого активного элемента
+                _transform = 0, // значение транфсофрмации .slider_wrapper
+                _step = _itemWidth / _wrapperWidth * 100, // величина шага (для трансформации)
+                _items = []; // массив элементов
+              // наполнение массива _items
+              _sliderItems.forEach(function (item, index) {
+                _items.push({ item: item, position: index, transform: 0 });
+              });
+      
+              var position = {
+                getMin: 0,
+                getMax: _items.length - 1,
+              }
+      
+              var _transformItem = function (direction) {
+                if (direction === 'right') {
+                  if ((_positionLeftItem + _wrapperWidth / _itemWidth - 1) >= position.getMax) {
+                    return;
+                  }
+                  if (!_sliderControlLeft.classList.contains('slider_detail__control_show')) {
+                    _sliderControlLeft.classList.add('slider_detail__control_show');
+                  }
+                  if (_sliderControlRight.classList.contains('slider_detail__control_show') && (_positionLeftItem + _wrapperWidth / _itemWidth) >= position.getMax) {
+                    _sliderControlRight.classList.remove('slider_detail__control_show');
+                  }
+                  _positionLeftItem++;
+                  _transform -= _step;
+                }
+                if (direction === 'left') {
+                  if (_positionLeftItem <= position.getMin) {
+                    return;
+                  }
+                  if (!_sliderControlRight.classList.contains('slider_detail__control_show')) {
+                    _sliderControlRight.classList.add('slider_detail__control_show');
+                  }
+                  if (_sliderControlLeft.classList.contains('slider_detail__control_show') && _positionLeftItem - 1 <= position.getMin) {
+                    _sliderControlLeft.classList.remove('slider_detail__control_show');
+                  }
+                  _positionLeftItem--;
+                  _transform += _step;
+                }
+                _sliderWrapper.style.transform = 'translateX(' + _transform + '%)';
+              }
+      
+              // обработчик события click для кнопок "назад" и "вперед"
+              var _controlClick = function (e) {
+                if (e.target.classList.contains('slider_detail__control')) {
+                  e.preventDefault();
+                  var direction = e.target.classList.contains('slider_detail__control_right') ? 'right' : 'left';
+                  _transformItem(direction);
+                }
+              };
+      
+              var _setUpListeners = function () {
+                // добавление к кнопкам "назад" и "вперед" обрботчика _controlClick для событя click
+                _sliderControls.forEach(function (item) {
+                  item.addEventListener('click', _controlClick);
+                });
+              }
+      
+              // инициализация
+              _setUpListeners();
+      
+              return {
+                right: function () { // метод right
+                  _transformItem('right');
+                },
+                left: function () { // метод left
+                  _transformItem('left');
+                }
+              }
+      
+            }
+          }());
+      
+          var slider = multiItemSlider('.slider_detail')
+
+
+
+
+</script>

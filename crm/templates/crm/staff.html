@@ -1,0 +1,114 @@
+{% extends "base_generic.html" %}
+{% load static %}
+{% block logo %}
+{% endblock %}
+
+{% block baner %} 
+{%endblock%}
+{% block content %}
+
+    {% csrf_token %}
+
+
+<div class="crm_logo"><a href="{% url 'log' %}"><h3 data-shop_id="{{a}}" id = 'id_shop'>{{a}}</h3> </a></div>
+ <div class="crm_nav">   
+	<a href="#">Все товары</a>&nbsp;&nbsp;&nbsp;&nbsp;
+	<a href="{% url 'crm_orders' %}">Заказы</a>&nbsp;&nbsp;&nbsp;&nbsp;
+</div>		
+<div class="product_crm_all" >
+{% for product in products %}
+<div class="product_crm" >
+<div class="product_crm_image"><img src="{{ product.product_image.url }}" height="300" width="250"></div>
+ <div class="crm_product_dere">
+ <a href="{{ product.get_absolute_url }}"> <h3>Посмотреть на сайте </h3></a>
+			<h4>{{ product.product_title }}</h4>
+			<p> Описание:{{ product.product_description}}</p>
+            <p> Цена:{{ product.product_prace}}</p>
+            <p>Размер</p>
+				{% for copy in product.productinstance_set.all %}
+				 {{copy.size}} 
+			   {% endfor%}
+                <a href="{% url 'crm-detail' pk=product.id%}">Изменить</a>				
+</div>	
+</div>					 
+{% endfor %}		
+</div>	
+
+<div id = 'check'></div>
+
+
+<script>
+
+
+let timerId = setInterval(() => check(), 10000);
+
+
+function check(){
+    var id_shop =$('#id_shop')
+    var id_shop = id_shop.data('shop_id')
+    console.log(id_shop)
+    var data = {};
+    var csrf_token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+    data["csrfmiddlewaretoken"] = csrf_token;
+    data.id_shop = id_shop
+    console.log(data)
+    $.ajax({
+            url: "{% url 'check_orders' %}",
+            type: 'POST',
+            data: data, 
+            cache: true,
+            success: function (data) {
+                var audio = new Audio();
+                audio.src = "{% static 'mp3/click.mp3' %}";
+                console.log(data)
+                var count_orders = data.return_dict
+                console.log(count_orders)
+                if (count_orders > 0){
+                    
+                    audio.play()
+                }
+                
+                
+                console.log("OK");},
+                
+            
+            error: function(){
+                console.log("error");
+                alert("error")
+            },
+                
+            })   
+
+}
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+function check(){
+
+	document.location.href = "{% url 'crm_orders' %}";
+	return false;	}
+
+</div>
+			{% endblock %}
+

@@ -1,0 +1,23 @@
+{% extends "base_generic.html" %}
+{% load static %}
+{% block title %}
+{% endblock %}
+{% block content %}
+
+
+    <h1></h1>
+
+    <p>Выберите размер </p>
+    <hr>
+    <form action="{%url 'orders' %}" id ="by_product" class="form-inline">{% csrf_token %}
+      <select id = "size">
+        {% for copy in product.productinstance_set.all %}
+         <option value="{{copy.id}}">{{copy.size}}</option>
+       {% endfor%}
+      </select>
+       <button type="submit" id = "submit_btn" data-product_title="{{ product.product_title }}" data-product_prace="{{ product.product_prace}}" >Купить</button>
+    </form>
+   
+  </div>
+  
+{% endblock %}

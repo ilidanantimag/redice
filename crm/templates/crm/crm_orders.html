@@ -1,0 +1,71 @@
+{% extends "base_generic.html" %}
+{% load static %}
+{% block logo %}
+{% endblock %}
+
+{% block baner %} 
+{%endblock%}
+{% block content %}
+
+<div class="crm_fon">
+<div class="crm_logo"><a href="{% url 'log' %}"><h3>{{a}}</h3> </a></div>
+
+
+<div class="orders_menu">
+
+<a href="{% url 'crm_orders' %}">Все заказы</a>
+<a href="{% url 'order_new'%}">Новые</a>
+<a href="{% url 'order_sobran_all'%}">Собранные</a>
+<a href="{% url 'from_the_courier_all'%}">У курьера</a>
+<a href="{% url 'order_complite_return'%}">Выпполненые заказы</a>
+
+
+</div>
+<br>
+<br>
+
+
+	 
+
+ {% for i in orders%}
+ <div class="crm_orders" >
+ <div class="crm_orders_title">	 
+ <h4>Id заказа: {{i.user_id}}</h4>	 
+ <h4>Статус: {{i.get_status_display}}</h4>
+ <h4>{{i.product_title}}</h4>
+</div>
+  <img src="{{i.product_image.url}}" height="200" width="200">
+ <div class="crm_user">
+	 <h4>Информация о заказе:</h4>
+ <p>Имя:{{i.name}}</p>
+ <p>Телефон:{{i.phone}}</p>
+ <p>Адресс: {{i.adress}}</p>
+ <p>Цена:{{i.product_prace}}</p>
+ 
+ </div>
+ <div class="crm_orders_control"> 
+ <a href="{{i.get_absolute_urlsobran}}">Собран</a>
+ <a href="{{i.get_absolute_urlcourier}}">У курьера</a>
+ <br>
+ <br>
+ 
+ <a href="{{i.get_absolute_url}}">Выполнен</a>
+ <a href="{{i.get_absolute_urlw}}">Возврат</a>
+
+</div>
+</div>
+
+ 
+ {% endfor%}
+
+
+</div>
+	{% endblock %}
+
+
+
+
+
+
+
+
